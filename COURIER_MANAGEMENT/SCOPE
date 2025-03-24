@@ -1,0 +1,43 @@
+--SCOPE : INNERQUERIES,NON EQUI JOINS,EQUI JOINS,EXIST,ANY,ALL
+ 
+ --49. Find Couriers That Have a Weight Greater Than the Average Weight of All Couriers
+--Uses INNER QUERY to compute the average weight
+
+
+SELECT * FROM Courier
+WHERE Weight > (SELECT AVG(Weight) FROM Courier);
+
+--50. Find the Names of All Employees Who Have a Salary Greater Than the Average Salary
+-- Uses INNER QUERY to compute the average salary
+
+SELECT Name, Salary FROM Employee
+WHERE Salary > (SELECT AVG(Salary) FROM Employee);
+
+
+--51. Find the Total Cost of All Courier Services Where the Cost is Less Than the Maximum Cost
+ --Uses INNER QUERY to find the maximum cost
+
+SELECT SUM(Cost) AS TotalCost FROM CourierServices
+WHERE Cost < (SELECT MAX(Cost) FROM CourierServices);
+
+
+--52. Find All Couriers That Have Been Paid For
+-- Uses EXISTS to check for payments linked to couriers--
+
+
+SELECT C.CourierID, C.SenderName, C.Status, C.TrackingNumber 
+FROM Courier as c
+WHERE EXISTS (select * from Payment as P where C.CourierID = P.CourierID)
+
+--53. Find the Locations Where the Maximum Payment Amount Was Made
+-- Uses ANY to compare payments with the maximum payment
+
+SELECT P.LocationId, P.Amount from Payment as P
+WHERE Amount = (select max(Amount) from Payment as P)
+
+--54. Find All Couriers Whose Weight is Greater Than the Weight of All Couriers Sent by a Specific Sender (e.g., 'Alice Smith')
+-- Uses ALL to compare courier weights
+
+
+SELECT * FROM Courier
+WHERE Weight > ALL (SELECT Weight FROM Courier WHERE SenderName = 'Frank Miller');
