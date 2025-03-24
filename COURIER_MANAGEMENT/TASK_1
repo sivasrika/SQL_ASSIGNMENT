@@ -1,0 +1,178 @@
+--Create database
+ Use CourierManagament
+
+ --users table
+ CREATE TABLE Users (
+    UserID INT PRIMARY KEY IDENTITY(100,1),
+    Name VARCHAR(255) NOT NULL,
+    Email VARCHAR(255) UNIQUE NOT NULL,
+    Password VARCHAR(255) NOT NULL,
+    ContactNumber VARCHAR(20),
+    Address TEXT
+);
+
+-- Employee Table
+CREATE TABLE Employee (
+    EmployeeID INT PRIMARY KEY IDENTITY(200,1),
+    Name VARCHAR(255) NOT NULL,
+    Email VARCHAR(255) UNIQUE NOT NULL,
+    ContactNumber VARCHAR(20),
+    Role VARCHAR(50),
+    Salary DECIMAL(10,2)
+);
+
+ALTER TABLE Employee
+ADD LocationID INT;
+ALTER TABLE Employee
+ADD CONSTRAINT FK_Employee_Location
+FOREIGN KEY (LocationID) REFERENCES Location(LocationID);
+
+
+-- Location Table
+CREATE TABLE Location (
+    LocationID INT PRIMARY KEY IDENTITY(300,1),
+    LocationName VARCHAR(100) NOT NULL,
+    Address TEXT NOT NULL
+);
+
+-- CourierServices Table
+CREATE TABLE CourierServices (
+    ServiceID INT PRIMARY KEY IDENTITY(400,1),
+    ServiceName VARCHAR(100) NOT NULL,
+    Cost DECIMAL(8,2) NOT NULL
+);
+
+CREATE TABLE Courier (
+    CourierID INT PRIMARY KEY IDENTITY(500,1),
+    SenderName VARCHAR(255) NOT NULL,
+    SenderAddress TEXT NOT NULL,
+    ReceiverName VARCHAR(255) NOT NULL,
+    ReceiverAddress TEXT NOT NULL,
+    ServiceID INT,
+    Weight DECIMAL(5,2),
+    Status VARCHAR(50),
+    TrackingNumber VARCHAR(20) UNIQUE,
+    DeliveryDate DATE,
+    EmployeeID INT,
+    FOREIGN KEY (ServiceID) REFERENCES CourierServices(ServiceID),
+    FOREIGN KEY (EmployeeID) REFERENCES Employee(EmployeeID)
+)
+
+CREATE TABLE Payment (
+    PaymentID INT PRIMARY KEY IDENTITY(600,1),
+    CourierID INT,
+    LocationID INT,
+    Amount DECIMAL(10,2) NOT NULL,
+    PaymentDate DATE NOT NULL,
+    FOREIGN KEY (CourierID) REFERENCES Courier(CourierID),
+    FOREIGN KEY (LocationID) REFERENCES Location(LocationID)
+);
+
+--users data
+INSERT INTO Users (Name, Email, Password, ContactNumber, Address) VALUES
+('Alice Smith', 'alice@email.com', 'pass123', '1234567890', '742 Evergreen Terrace, Springfield, IL'),
+('Bob Johnson', 'bob@email.com', 'pass456', '0987654321', '1600 Pennsylvania Ave NW, Washington, DC'),
+('Charlie Davis', 'charlie@email.com', 'pass789', '2223334444', '221B Baker Street, London, UK'),
+('David White', 'david@email.com', 'pass101', '5556667777', '10 Downing Street, London, UK'),
+('Emma Wilson', 'emma@email.com', 'pass202', '8889990000', 'Eiffel Tower, Paris, France'),
+('Frank Miller', 'frank@email.com', 'pass303', '1012023030', 'Sydney Opera House, Sydney, Australia'),
+('Grace Adams', 'grace@email.com', 'pass404', '4045056060', '1 Infinite Loop, Cupertino, CA'),
+('Henry Clark', 'henry@email.com', 'pass505', '7078089090', 'Statue of Liberty, New York, NY'),
+('Isabella Scott', 'isabella@email.com', 'pass606', '6067078080', 'Burj Khalifa, Dubai, UAE'),
+('Jack Turner', 'jack@email.com', 'pass707', '9091011121', 'Marina Bay Sands, Singapore');
+
+select * from Users
+
+-- Sample Data for Employees
+INSERT INTO Employee (Name, Email, ContactNumber, Role, Salary) VALUES
+('John Doe', 'johndoe@email.com', '1112223333', 'Courier Manager', 60000.00),
+('Jane Doe', 'janedoe@email.com', '4445556666', 'Delivery Staff', 45000.00),
+('Michael Brown', 'michael@email.com', '7778889999', 'Logistics Head', 75000.00),
+('Olivia Taylor', 'olivia@email.com', '6667778888', 'Warehouse Manager', 50000.00),
+('Sophia Martinez', 'sophia@email.com', '3334445555', 'Field Executive', 40000.00),
+('Daniel Garcia', 'daniel@email.com', '2223331111', 'Transport Supervisor', 55000.00),
+('Emily Harris', 'emily@email.com', '9998887777', 'Inventory Specialist', 47000.00),
+('Nathan Hall', 'nathan@email.com', '5554443333', 'Fleet Coordinator', 51000.00),
+('Olivia Brown', 'oliviab@email.com', '8887776666', 'Package Handler', 42000.00),
+('Ryan Moore', 'ryan@email.com', '7776665555', 'Customer Support', 39000.00);
+
+
+select * from Employee
+
+-- insert Data for Locations
+INSERT INTO Location (LocationName, Address) VALUES
+('New York', '350 5th Ave, New York, NY 10118, USA'),
+('Los Angeles', 'Hollywood Blvd, Los Angeles, CA 90028, USA'),
+('Chicago', '233 S Wacker Dr, Chicago, IL 60606, USA'),
+('San Francisco', 'Golden Gate Bridge, San Francisco, CA 94129, USA'),
+('London', 'Tower Bridge Rd, London SE1 2UP, UK'),
+('Paris', 'Avenue des Champs-Élysées, Paris, France'),
+('Sydney', 'Bennelong Point, Sydney NSW 2000, Australia'),
+('Dubai', 'Sheikh Zayed Rd, Dubai, UAE'),
+('Tokyo', 'Shibuya Crossing, Tokyo, Japan'),
+('Singapore', '1 Bayfront Ave, Singapore 018971');
+
+select * from Location
+
+--insert data for courierservices
+INSERT INTO CourierServices (ServiceName, Cost) VALUES
+('Standard Delivery', 50.00),
+('Express Delivery', 100.00),
+('Same-Day Delivery', 150.00),
+('Overnight Delivery', 200.00),
+('International Shipping', 300.00),
+('Priority Shipping', 120.00),
+('Eco Delivery', 80.00),
+('Bulk Shipping', 250.00),
+('Freight Shipping', 400.00),
+('Custom Delivery', 180.00);
+
+select * from CourierServices
+
+-- Sample Data for Couriers
+INSERT INTO Courier (SenderName, SenderAddress, ReceiverName, ReceiverAddress, ServiceID, Weight, Status, TrackingNumber, DeliveryDate, EmployeeID) VALUES
+('Alice Smith', '742 Evergreen Terrace, Springfield, IL', 'Bob Johnson', '1600 Pennsylvania Ave NW, Washington, DC', 400, 2.5, 'In Transit', 'TRK123456', '2025-03-25', 200),
+('Charlie Davis', '221B Baker Street, London, UK', 'David White', '10 Downing Street, London, UK', 401, 1.8, 'Delivered', 'TRK654321', '2025-03-18', 201),
+('Emma Wilson', 'Eiffel Tower, Paris, France', 'Frank Miller', 'Sydney Opera House, Sydney, Australia', 402, 3.4, 'Pending', 'TRK789012', '2025-03-28', 202),
+('Grace Adams', '1 Infinite Loop, Cupertino, CA', 'Henry Clark', 'Statue of Liberty, New York, NY', 403, 2.0, 'Shipped', 'TRK345678', '2025-03-22', 203),
+('Isabella Scott', 'Burj Khalifa, Dubai, UAE', 'Jack Turner', 'Marina Bay Sands, Singapore', 404, 4.1, 'Processing', 'TRK901234', '2025-03-27', 204),
+('Bob Johnson', '1600 Pennsylvania Ave NW, Washington, DC', 'Alice Smith', '742 Evergreen Terrace, Springfield, IL', 405, 1.5, 'Delivered', 'TRK567890', '2025-03-19', 205),
+('David White', '10 Downing Street, London, UK', 'Charlie Davis', '221B Baker Street, London, UK', 406, 2.9, 'In Transit', 'TRK112233', '2025-03-24', 206),
+('Frank Miller', 'Sydney Opera House, Sydney, Australia', 'Emma Wilson', 'Eiffel Tower, Paris, France', 407, 3.2, 'Pending', 'TRK445566', '2025-03-30', 207),
+('Henry Clark', 'Statue of Liberty, New York, NY', 'Grace Adams', '1 Infinite Loop, Cupertino, CA', 408, 5.0, 'Shipped', 'TRK778899', '2025-04-02', 208),
+('Jack Turner', 'Marina Bay Sands, Singapore', 'Isabella Scott', 'Burj Khalifa, Dubai, UAE', 409, 3.8, 'Processing', 'TRK990011', '2025-04-05', 209);
+
+select * from Courier
+--insert data for Payment
+INSERT INTO Payment (CourierID, LocationID, Amount, PaymentDate) VALUES
+(500, 300, 50.00, '2025-03-20'),
+(501, 301, 100.00, '2025-03-15'),
+(502, 302, 150.00, '2025-03-18'),
+(503, 303, 200.00, '2025-03-21'),
+(504, 304, 300.00, '2025-03-25'),
+(505, 305, 75.00, '2025-03-23'),
+(506, 306, 225.00, '2025-03-26'),
+(507, 307, 175.00, '2025-03-19'),
+(508, 308, 275.00, '2025-03-17'),
+(509, 309, 320.00, '2025-03-22');
+
+
+select * from Payment
+
+UPDATE Employee
+SET LocationID = 
+    CASE 
+        WHEN Name = 'John Doe' THEN 300  -- New York
+        WHEN Name = 'Jane Doe' THEN 301  -- Los Angeles
+        WHEN Name = 'Michael Brown' THEN 302  -- Chicago
+        WHEN Name = 'Olivia Taylor' THEN 303  -- San Francisco
+        WHEN Name = 'Sophia Martinez' THEN 304  -- London
+        WHEN Name = 'Daniel Garcia' THEN 305  -- Paris
+        WHEN Name = 'Emily Harris' THEN 306  -- Sydney
+        WHEN Name = 'Nathan Hall' THEN 307  -- Dubai
+        WHEN Name = 'Olivia Brown' THEN 308  -- Tokyo
+        WHEN Name = 'Ryan Moore' THEN 309  -- Singapore
+    END
+WHERE LocationID IS NULL;
+
+select * from Employee
