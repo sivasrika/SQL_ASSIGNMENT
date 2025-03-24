@@ -176,3 +176,15 @@ SET LocationID =
 WHERE LocationID IS NULL;
 
 select * from Employee
+
+ ALTER TABLE Courier
+ADD SenderID INT,
+    ReceiverID INT,
+    FOREIGN KEY (SenderID) REFERENCES Users(UserID),
+    FOREIGN KEY (ReceiverID) REFERENCES Users(UserID);
+
+	UPDATE Courier
+SET SenderID = (SELECT UserID FROM Users WHERE Users.Name = Courier.SenderName),
+    ReceiverID = (SELECT UserID FROM Users WHERE Users.Name = Courier.ReceiverName);
+
+	select * from Courier
