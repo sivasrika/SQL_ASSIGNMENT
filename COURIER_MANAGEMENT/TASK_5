@@ -30,10 +30,10 @@ FROM Courier as c
 WHERE EXISTS (select * from Payment as P where C.CourierID = P.CourierID)
 
 --53. Find the Locations Where the Maximum Payment Amount Was Made
--- Uses ANY to compare payments with the maximum payment
-
-SELECT P.LocationId, P.Amount from Payment as P
-WHERE Amount = (select max(Amount) from Payment as P)
+SELECT L.LocationID, L.LocationName, P.Amount
+FROM Location L
+INNER JOIN Payment P ON L.LocationID = P.LocationID
+WHERE P.Amount = (SELECT MAX(Amount) FROM Payment);
 
 --54. Find All Couriers Whose Weight is Greater Than the Weight of All Couriers Sent by a Specific Sender (e.g., 'Alice Smith')
 -- Uses ALL to compare courier weights
